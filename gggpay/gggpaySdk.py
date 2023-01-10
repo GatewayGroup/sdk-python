@@ -294,6 +294,7 @@ class gggpaySdk:
             rstrip("\x06").rstrip("\x07").rstrip("\x08").rstrip("\x09").\
             rstrip("\x0a").rstrip("\x0b").rstrip("\x0c").rstrip("\x0d").\
             rstrip("\x0e").rstrip("\x0f").rstrip("\x10")
+        decryptedText = decryptedText.replace("\n", "")
         decryptedText = decryptedText.replace("\t", "")
         decryptedText = decryptedText.replace("\r", "")
         decryptedText = decryptedText.replace("\v", "")
