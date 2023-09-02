@@ -61,9 +61,15 @@ class gggpaySdk:
                 currency = "MYR"
             requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/createPayment"
             cnst = gggpaySdk.__generateConstant(requestUrl)
+            # If callbackUrl and redirectUrl are empty, take the values ​​of [curl] and [rurl] in the developer center.
+            # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
+            # The sorting rules of Json attribute data are arranged from [a-z]
             bodyJson = "{\"customer\":{\"email\":\"" + customerEmail + "\",\"name\":\"" + customerName + "\",\"phone\":\"" + customerPhone + "\"},\"method\":\"" + payMethod + \
                 "\",\"order\":{\"additionalData\":\"\",\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + \
                 currency + "\",\"id\":\"" + orderId + "\",\"title\":\"Payment\"}}"
+            #bodyJson = "{\"callbackUrl\":\"https://www.google.com\",\"customer\":{\"email\":\"" + customerEmail + "\",\"name\":\"" + customerName + "\",\"phone\":\"" + customerPhone + "\"},\"method\":\"" + payMethod + \
+            #    "\",\"order\":{\"additionalData\":\"\",\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + \
+            #    currency + "\",\"id\":\"" + orderId + "\",\"title\":\"Payment\"},\"redirectUrl\":\"https://www.google.com\"}"
             base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
             signature = gggpaySdk.__createSignature(cnst, base64ReqBody)
             encryptData = gggpaySdk.__symEncrypt(base64ReqBody)
@@ -101,10 +107,17 @@ class gggpaySdk:
                 currency = "MYR"
             requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/withdrawRequest"
             cnst = gggpaySdk.__generateConstant(requestUrl)
+            # payoutspeed contain "fast", "normal", "slow" ,default is : "fast"
+            # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
+            # The sorting rules of Json attribute data are arranged from [a-z]
             bodyJson = "{\"order\":{\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + currency + "\",\"id\":\"" + orderId + "\"},\"recipient\":{\"email\":\"" + recipientEmail + \
                 "\",\"methodRef\":\"" + refName + "\",\"methodType\":\"" + bankCode + "\",\"methodValue\":\"" + \
                 accountNumber + "\",\"name\":\"" + cardholder + \
                 "\",\"phone\":\"" + recipientPhone + "\"}}"
+            #bodyJson = "{\"order\":{\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + currency + "\",\"id\":\"" + orderId + "\"},\"payoutspeed\":\"normal\",\"recipient\":{\"email\":\"" + recipientEmail + \
+            #    "\",\"methodRef\":\"" + refName + "\",\"methodType\":\"" + bankCode + "\",\"methodValue\":\"" + \
+            #    accountNumber + "\",\"name\":\"" + cardholder + \
+            #    "\",\"phone\":\"" + recipientPhone + "\"}}"
             base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
             signature = gggpaySdk.__createSignature(cnst, base64ReqBody)
             encryptData = gggpaySdk.__symEncrypt(base64ReqBody)
@@ -132,6 +145,9 @@ class gggpaySdk:
                 return {"code": 0, "message": "token is null"}
             requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/getTransactionStatusById"
             cnst = gggpaySdk.__generateConstant(requestUrl)
+            # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
+            # The sorting rules of Json attribute data are arranged from [a-z]
+            # type : 1 deposit,2 withdrawal
             bodyJson = "{\"transactionId\":\"" + \
                 orderId + "\",\"type\":" + str(type) + "}"
             base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
