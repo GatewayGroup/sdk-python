@@ -114,7 +114,7 @@ class gggpaySdk:
                 "\",\"methodRef\":\"" + refName + "\",\"methodType\":\"" + bankCode + "\",\"methodValue\":\"" + \
                 accountNumber + "\",\"name\":\"" + cardholder + \
                 "\",\"phone\":\"" + recipientPhone + "\"}}"
-            #bodyJson = "{\"order\":{\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + currency + "\",\"id\":\"" + orderId + "\"},\"payoutspeed\":\"normal\",\"recipient\":{\"email\":\"" + recipientEmail + \
+            #bodyJson = "{\"callbackUrl\":\"https://www.google.com\",\"order\":{\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + currency + "\",\"id\":\"" + orderId + "\"},\"payoutspeed\":\"normal\",\"recipient\":{\"email\":\"" + recipientEmail + \
             #    "\",\"methodRef\":\"" + refName + "\",\"methodType\":\"" + bankCode + "\",\"methodValue\":\"" + \
             #    accountNumber + "\",\"name\":\"" + cardholder + \
             #    "\",\"phone\":\"" + recipientPhone + "\"}}"
