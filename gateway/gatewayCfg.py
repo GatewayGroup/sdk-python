@@ -1,4 +1,4 @@
-class gggpayCfg:
+class gatewayCfg:
 
     # -- begin config --------------------------------------------------------------------------------
 
@@ -8,7 +8,7 @@ class gggpayCfg:
     VERSION_NO = "v1"
 
     # **
-    # * GGGPay Api Url
+    # * gateway Api Url
     # */
     BASE_URL = "http://localhost:3000/"
 
@@ -75,8 +75,8 @@ class gggpayCfg:
 
     # **
     # * initialize this configuration
-    # * @param {*} verNo GGGPay Api Version Number
-    # * @param {*} apiUrl apiUrl GGGPay Api Url
+    # * @param {*} verNo gateway Api Version Number
+    # * @param {*} apiUrl apiUrl gateway Api Url
     # * @param {*} appId appId in developer settings : App Id
     # * @param {*} key key in developer settings : Key
     # * @param {*} secret secret in developer settings : secret
@@ -85,10 +85,10 @@ class gggpayCfg:
     # */
     @staticmethod
     def init(verNo, apiUrl, appId, key, secret, serverPubKey, privateKey):
-        gggpayCfg.VERSION_NO = verNo
-        gggpayCfg.BASE_URL = apiUrl
-        gggpayCfg.CLIENT_ID = appId
-        gggpayCfg.CLIENT_SYMMETRIC_KEY = key
-        gggpayCfg.CLIENT_SECRET = secret
-        gggpayCfg.SERVER_PUB_KEY = serverPubKey
-        gggpayCfg.PRIVATE_KEY = privateKey
+        gatewayCfg.VERSION_NO = verNo
+        gatewayCfg.BASE_URL = apiUrl
+        gatewayCfg.CLIENT_ID = appId
+        gatewayCfg.CLIENT_SYMMETRIC_KEY = key
+        gatewayCfg.CLIENT_SECRET = secret
+        gatewayCfg.SERVER_PUB_KEY = serverPubKey
+        gatewayCfg.PRIVATE_KEY = privateKey

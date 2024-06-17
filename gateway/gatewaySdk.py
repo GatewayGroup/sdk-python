@@ -16,10 +16,10 @@ from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKC
 from Crypto.Signature import PKCS1_v1_5 as Signature_PKC
 
 # import config
-from gggpay.gggpayCfg import gggpayCfg
+from gateway.gatewayCfg import gatewayCfg
 
 
-class gggpaySdk:
+class gatewaySdk:
 
     # **
     # * rsa algorithm
@@ -54,13 +54,13 @@ class gggpaySdk:
     @staticmethod
     def deposit(orderId, amount, currency, payMethod, customerName, customerEmail, customerPhone) -> dict:
         try:
-            token = gggpaySdk.__getToken()
-            if gggpaySdk.__isnull(token):
+            token = gatewaySdk.__getToken()
+            if gatewaySdk.__isnull(token):
                 return {"code": 0, "message": "token is null"}
-            if gggpaySdk.__isnull(currency):
+            if gatewaySdk.__isnull(currency):
                 currency = "MYR"
-            requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/createPayment"
-            cnst = gggpaySdk.__generateConstant(requestUrl)
+            requestUrl = "gateway/" + gatewayCfg.VERSION_NO + "/createPayment"
+            cnst = gatewaySdk.__generateConstant(requestUrl)
             # If callbackUrl and redirectUrl are empty, take the values ​​of [curl] and [rurl] in the developer center.
             # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
             # The sorting rules of Json attribute data are arranged from [a-z]
@@ -70,16 +70,16 @@ class gggpaySdk:
             #bodyJson = "{\"callbackUrl\":\"https://www.google.com\",\"customer\":{\"email\":\"" + customerEmail + "\",\"name\":\"" + customerName + "\",\"phone\":\"" + customerPhone + "\"},\"method\":\"" + payMethod + \
             #    "\",\"order\":{\"additionalData\":\"\",\"amount\":\"" + str(amount) + "\",\"currencyType\":\"" + \
             #    currency + "\",\"id\":\"" + orderId + "\",\"title\":\"Payment\"},\"redirectUrl\":\"https://www.google.com\"}"
-            base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
-            signature = gggpaySdk.__createSignature(cnst, base64ReqBody)
-            encryptData = gggpaySdk.__symEncrypt(base64ReqBody)
+            base64ReqBody = gatewaySdk.__sortedAfterToBased64(bodyJson)
+            signature = gatewaySdk.__createSignature(cnst, base64ReqBody)
+            encryptData = gatewaySdk.__symEncrypt(base64ReqBody)
             json = {"data": encryptData}
-            dict = gggpaySdk.__post(requestUrl, token, signature,
+            dict = gatewaySdk.__post(requestUrl, token, signature,
                                     json, cnst["nonceStr"], cnst["timestamp"])
-            if gggpaySdk.__isnull(dict["code"]) == False and gggpaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
+            if gatewaySdk.__isnull(dict["code"]) == False and gatewaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
                 return dict
-            decryptedData = gggpaySdk.symDecrypt(dict["encryptedData"])
-            result = gggpaySdk.__tryParseJson(decryptedData)
+            decryptedData = gatewaySdk.symDecrypt(dict["encryptedData"])
+            result = gatewaySdk.__tryParseJson(decryptedData)
             return result
         except Exception as e:
             return {"code": 0, "message": e}
@@ -100,13 +100,13 @@ class gggpaySdk:
     @staticmethod
     def withdraw(orderId, amount, currency, bankCode, cardholder, accountNumber, refName, recipientEmail, recipientPhone) -> dict:
         try:
-            token = gggpaySdk.__getToken()
-            if gggpaySdk.__isnull(token):
+            token = gatewaySdk.__getToken()
+            if gatewaySdk.__isnull(token):
                 return {"code": 0, "message": "token is null"}
-            if gggpaySdk.__isnull(currency):
+            if gatewaySdk.__isnull(currency):
                 currency = "MYR"
-            requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/withdrawRequest"
-            cnst = gggpaySdk.__generateConstant(requestUrl)
+            requestUrl = "gateway/" + gatewayCfg.VERSION_NO + "/withdrawRequest"
+            cnst = gatewaySdk.__generateConstant(requestUrl)
             # payoutspeed contain "fast", "normal", "slow" ,default is : "fast"
             # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
             # The sorting rules of Json attribute data are arranged from [a-z]
@@ -118,16 +118,16 @@ class gggpaySdk:
             #    "\",\"methodRef\":\"" + refName + "\",\"methodType\":\"" + bankCode + "\",\"methodValue\":\"" + \
             #    accountNumber + "\",\"name\":\"" + cardholder + \
             #    "\",\"phone\":\"" + recipientPhone + "\"}}"
-            base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
-            signature = gggpaySdk.__createSignature(cnst, base64ReqBody)
-            encryptData = gggpaySdk.__symEncrypt(base64ReqBody)
+            base64ReqBody = gatewaySdk.__sortedAfterToBased64(bodyJson)
+            signature = gatewaySdk.__createSignature(cnst, base64ReqBody)
+            encryptData = gatewaySdk.__symEncrypt(base64ReqBody)
             json = {"data": encryptData}
-            dict = gggpaySdk.__post(requestUrl, token, signature,
+            dict = gatewaySdk.__post(requestUrl, token, signature,
                                     json, cnst["nonceStr"], cnst["timestamp"])
-            if gggpaySdk.__isnull(dict["code"]) == False and gggpaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
+            if gatewaySdk.__isnull(dict["code"]) == False and gatewaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
                 return dict
-            decryptedData = gggpaySdk.symDecrypt(dict["encryptedData"])
-            result = gggpaySdk.__tryParseJson(decryptedData)
+            decryptedData = gatewaySdk.symDecrypt(dict["encryptedData"])
+            result = gatewaySdk.__tryParseJson(decryptedData)
             return result
         except Exception as e:
             return {"code": 0, "message": e}
@@ -140,26 +140,26 @@ class gggpaySdk:
     @staticmethod
     def detail(orderId, type) -> dict:
         try:
-            token = gggpaySdk.__getToken()
-            if gggpaySdk.__isnull(token):
+            token = gatewaySdk.__getToken()
+            if gatewaySdk.__isnull(token):
                 return {"code": 0, "message": "token is null"}
-            requestUrl = "gggpay/" + gggpayCfg.VERSION_NO + "/getTransactionStatusById"
-            cnst = gggpaySdk.__generateConstant(requestUrl)
+            requestUrl = "gateway/" + gatewayCfg.VERSION_NO + "/getTransactionStatusById"
+            cnst = gatewaySdk.__generateConstant(requestUrl)
             # Remember, the format of json and the order of json attributes must be the same as the SDK specifications.
             # The sorting rules of Json attribute data are arranged from [a-z]
             # type : 1 deposit,2 withdrawal
             bodyJson = "{\"transactionId\":\"" + \
                 orderId + "\",\"type\":" + str(type) + "}"
-            base64ReqBody = gggpaySdk.__sortedAfterToBased64(bodyJson)
-            signature = gggpaySdk.__createSignature(cnst, base64ReqBody)
-            encryptData = gggpaySdk.__symEncrypt(base64ReqBody)
+            base64ReqBody = gatewaySdk.__sortedAfterToBased64(bodyJson)
+            signature = gatewaySdk.__createSignature(cnst, base64ReqBody)
+            encryptData = gatewaySdk.__symEncrypt(base64ReqBody)
             json = {"data": encryptData}
-            dict = gggpaySdk.__post(requestUrl, token, signature,
+            dict = gatewaySdk.__post(requestUrl, token, signature,
                                     json, cnst["nonceStr"], cnst["timestamp"])
-            if gggpaySdk.__isnull(dict["code"]) == False and gggpaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
+            if gatewaySdk.__isnull(dict["code"]) == False and gatewaySdk.__isnull(dict["encryptedData"]) == False and dict["code"] != 1:
                 return dict
-            decryptedData = gggpaySdk.symDecrypt(dict["encryptedData"])
-            result = gggpaySdk.__tryParseJson(decryptedData)
+            decryptedData = gatewaySdk.symDecrypt(dict["encryptedData"])
+            result = gatewaySdk.__tryParseJson(decryptedData)
             return result
         except Exception as e:
             return {"code": 0, "message": e}
@@ -170,15 +170,15 @@ class gggpaySdk:
     # */
     @staticmethod
     def __getToken() -> str:
-        if gggpaySdk.__isnull(gggpaySdk.EncryptAuthInfo):
-            authString = gggpaySdk.__stringToBase64(
-                gggpayCfg.CLIENT_ID+":" + gggpayCfg.CLIENT_SECRET)
-            gggpaySdk.EncryptAuthInfo = gggpaySdk.__publicEncrypt(authString)
-        json = {"data": gggpaySdk.EncryptAuthInfo}
-        dict = gggpaySdk.__post("gggpay/" + gggpayCfg.VERSION_NO +
+        if gatewaySdk.__isnull(gatewaySdk.EncryptAuthInfo):
+            authString = gatewaySdk.__stringToBase64(
+                gatewayCfg.CLIENT_ID+":" + gatewayCfg.CLIENT_SECRET)
+            gatewaySdk.EncryptAuthInfo = gatewaySdk.__publicEncrypt(authString)
+        json = {"data": gatewaySdk.EncryptAuthInfo}
+        dict = gatewaySdk.__post("gateway/" + gatewayCfg.VERSION_NO +
                                 "/createToken", "", "", json, "", "")
-        if gggpaySdk.__isnull(dict["code"]) == False and gggpaySdk.__isnull(dict["encryptedToken"]) == False and dict["code"] == 1:
-            token = gggpaySdk.symDecrypt(dict["encryptedToken"])
+        if gatewaySdk.__isnull(dict["code"]) == False and gatewaySdk.__isnull(dict["encryptedToken"]) == False and dict["code"] == 1:
+            token = gatewaySdk.symDecrypt(dict["encryptedToken"])
             return token
         raise Exception("__getToken exception")
 
@@ -190,12 +190,12 @@ class gggpaySdk:
     # */
     @classmethod
     def __post(cls, url, token, signature, json, nonceStr, timestamp):
-        if gggpayCfg.BASE_URL.endswith("/"):
-            url = gggpayCfg.BASE_URL + url
+        if gatewayCfg.BASE_URL.endswith("/"):
+            url = gatewayCfg.BASE_URL + url
         else:
-            url = gggpayCfg.BASE_URL + "/" + url
+            url = gatewayCfg.BASE_URL + "/" + url
         headers = {"Content-type": "application/json"}
-        if gggpaySdk.__isnull(token) == False and gggpaySdk.__isnull(signature) == False and gggpaySdk.__isnull(nonceStr) == False and gggpaySdk.__isnull(timestamp) == False:
+        if gatewaySdk.__isnull(token) == False and gatewaySdk.__isnull(signature) == False and gatewaySdk.__isnull(nonceStr) == False and gatewaySdk.__isnull(timestamp) == False:
             headers = {"Content-type": "application/json", "Authorization": token, "X-Nonce-Str": nonceStr,
                        "X-Signature": signature,
                        "X-Timestamp": str(timestamp)}
@@ -216,7 +216,7 @@ class gggpaySdk:
         dataString = "data="+base64ReqBody+"&method="+cnst["method"]+"&nonceStr="+cnst["nonceStr"] + \
             "&requestUrl="+cnst["requestUrl"]+"&signType=" + \
             cnst["signType"]+"&timestamp="+str(cnst["timestamp"])
-        signature = gggpaySdk.__sign(dataString)
+        signature = gatewaySdk.__sign(dataString)
         return cnst["signType"]+" " + signature
 
     # **
@@ -228,7 +228,7 @@ class gggpaySdk:
     def __generateConstant(cls, requestUrl) -> dict:
         constant = {
             "method": "post",
-            "nonceStr": gggpaySdk.__randomNonceStr(),
+            "nonceStr": gatewaySdk.__randomNonceStr(),
             "requestUrl": requestUrl,
             "signType": "sha256",
             "timestamp": int(round(time.time()*1000)),
@@ -242,7 +242,7 @@ class gggpaySdk:
     @classmethod
     def __randomNonceStr(cls) -> str:
         bytesData = Random.get_random_bytes(8)
-        hex = gggpaySdk.__bytesToHex(bytesData)
+        hex = gatewaySdk.__bytesToHex(bytesData)
         return hex
 
     # **
@@ -252,11 +252,11 @@ class gggpaySdk:
     # */
     @classmethod
     def __publicEncrypt(cls, data: str) -> str:
-        bytesData = gggpaySdk.__stringToBytes(data)
-        rsaKey = RSA.import_key(gggpayCfg.SERVER_PUB_KEY)
+        bytesData = gatewaySdk.__stringToBytes(data)
+        rsaKey = RSA.import_key(gatewayCfg.SERVER_PUB_KEY)
         encryptCipher = Cipher_PKC.new(rsaKey)
         encryptBuffer = encryptCipher.encrypt(bytesData)
-        hex = gggpaySdk.__bytesToHex(encryptBuffer)
+        hex = gatewaySdk.__bytesToHex(encryptBuffer)
         return hex
 
     # **
@@ -266,12 +266,12 @@ class gggpaySdk:
     # */
     @classmethod
     def __privateDecrypt(cls, encryptData: str) -> dict:
-        encryptBuffer = gggpaySdk.__hexToBytes(encryptData)
-        rsaKey = RSA.import_key(gggpayCfg.PRIVATE_KEY)
+        encryptBuffer = gatewaySdk.__hexToBytes(encryptData)
+        rsaKey = RSA.import_key(gatewayCfg.PRIVATE_KEY)
         decryptCipher = Cipher_PKC.new(rsaKey)
         decryptBuffer = decryptCipher.decrypt(encryptBuffer)
-        msg = gggpaySdk.__bytesToString(decryptBuffer)
-        return gggpaySdk.__tryParseJson(msg)
+        msg = gatewaySdk.__bytesToString(decryptBuffer)
+        return gatewaySdk.__tryParseJson(msg)
 
     # **
     # * Payment interface data encryption method
@@ -280,13 +280,13 @@ class gggpaySdk:
     # */
     @classmethod
     def __symEncrypt(cls, message: str) -> str:
-        key = gggpaySdk.__stringToBytes(gggpayCfg.CLIENT_SYMMETRIC_KEY)
-        iv = gggpaySdk.__generateIv(gggpayCfg.CLIENT_SYMMETRIC_KEY)
+        key = gatewaySdk.__stringToBytes(gatewayCfg.CLIENT_SYMMETRIC_KEY)
+        iv = gatewaySdk.__generateIv(gatewayCfg.CLIENT_SYMMETRIC_KEY)
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        messageBuffer = gggpaySdk.__stringToBytes(message)
+        messageBuffer = gatewaySdk.__stringToBytes(message)
         messageBuffer = Padding.pad(messageBuffer, 16, style="pkcs7")
         encryptBuffer = cipher.encrypt(messageBuffer)
-        encrypted = gggpaySdk.__bytesToHex(encryptBuffer)
+        encrypted = gatewaySdk.__bytesToHex(encryptBuffer)
         return encrypted
 
     # **
@@ -296,12 +296,12 @@ class gggpaySdk:
     # */
     @staticmethod
     def symDecrypt(encryptedMessage: str) -> str:
-        key = gggpaySdk.__stringToBytes(gggpayCfg.CLIENT_SYMMETRIC_KEY)
-        iv = gggpaySdk.__generateIv(gggpayCfg.CLIENT_SYMMETRIC_KEY)
+        key = gatewaySdk.__stringToBytes(gatewayCfg.CLIENT_SYMMETRIC_KEY)
+        iv = gatewaySdk.__generateIv(gatewayCfg.CLIENT_SYMMETRIC_KEY)
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        encryptBuffer = gggpaySdk.__hexToBytes(encryptedMessage)
+        encryptBuffer = gatewaySdk.__hexToBytes(encryptedMessage)
         decryptBuffer = cipher.decrypt(encryptBuffer)
-        decryptedText = gggpaySdk.__bytesToString(decryptBuffer)
+        decryptedText = gatewaySdk.__bytesToString(decryptBuffer)
         # Encryption function, if the text is less than 16 digits, fill it with spaces to 16 digits,
         # If it is greater than 16 but not a multiple of 16, it will be a multiple of 16.
         # After decryption, remove the supplementary spaces and use strip() to remove them
@@ -323,13 +323,13 @@ class gggpaySdk:
     # */
     @classmethod
     def __sign(cls, data: str) -> str:
-        rsaKey = RSA.import_key(gggpayCfg.PRIVATE_KEY)
-        bytesData = gggpaySdk.__stringToBytes(data)
+        rsaKey = RSA.import_key(gatewayCfg.PRIVATE_KEY)
+        bytesData = gatewaySdk.__stringToBytes(data)
         sha256Hash = SHA256.new(bytesData)
         signer = Signature_PKC.new(rsaKey)
         signatureBuffer = signer.sign(sha256Hash)
         base64Bytes = binascii.b2a_base64(signatureBuffer)
-        base64Str = gggpaySdk.__bytesToString(base64Bytes)
+        base64Str = gatewaySdk.__bytesToString(base64Bytes)
         return base64Str.rstrip().rstrip("\n").rstrip("\t")
 
     # **
@@ -340,9 +340,9 @@ class gggpaySdk:
     # */
     @classmethod
     def __verify(cls, data, signature: str) -> bool:
-        rsaKey = RSA.import_key(gggpayCfg.SERVER_PUB_KEY)
+        rsaKey = RSA.import_key(gatewayCfg.SERVER_PUB_KEY)
         sign_data = base64.b64decode(signature.encode("utf-8").strip())
-        encryptBuffer = gggpaySdk.__stringToBytes(data)
+        encryptBuffer = gatewaySdk.__stringToBytes(data)
         signer = Signature_PKC.new(rsaKey)
         isVerify = signer.verify(sign_data, encryptBuffer)
         return isVerify
@@ -354,8 +354,8 @@ class gggpaySdk:
     # */
     @classmethod
     def __sortedAfterToBased64(cls, jsonStr: str) -> str:
-        jsonBytes = gggpaySdk.__stringToBytes(jsonStr)
-        jsonBase64 = gggpaySdk.__bytesToBase64(jsonBytes)
+        jsonBytes = gatewaySdk.__stringToBytes(jsonStr)
+        jsonBase64 = gatewaySdk.__bytesToBase64(jsonBytes)
         return jsonBase64
 
     # **
@@ -365,7 +365,7 @@ class gggpaySdk:
     # */
     @classmethod
     def __generateIv(cls, symmetricKey: str) -> bytes:
-        bytesData = gggpaySdk.__stringToBytes(symmetricKey)
+        bytesData = gatewaySdk.__stringToBytes(symmetricKey)
         md5Hash = MD5.new(bytesData)
         iv = md5Hash.digest()
         return iv
@@ -387,7 +387,7 @@ class gggpaySdk:
     # */
     @classmethod
     def __stringToBase64(cls, data: str) -> str:
-        bytesData = gggpaySdk.__stringToBytes(data)
+        bytesData = gatewaySdk.__stringToBytes(data)
         bytesBase64 = base64.b64encode(bytesData)
         base64Str = bytesBase64.decode("utf-8")
         return base64Str
@@ -430,7 +430,7 @@ class gggpaySdk:
     @classmethod
     def __bytesToBase64(cls, bytesData: bytes) -> str:
         bytesStr = bytesData.decode("utf-8")
-        return gggpaySdk.__stringToBase64(bytesStr)
+        return gatewaySdk.__stringToBase64(bytesStr)
 
     # **
     # * Base64 to bytes
@@ -440,7 +440,7 @@ class gggpaySdk:
     @classmethod
     def __base64ToBytes(cls, base64Data: str) -> bytes:
         dataStr = base64.b64decode(base64Data)
-        return gggpaySdk.__stringToBytes(dataStr)
+        return gatewaySdk.__stringToBytes(dataStr)
 
     # **
     # * 尝试将数据转成JSON
